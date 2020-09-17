@@ -21,6 +21,7 @@ struct Viaje {
 // Alta
 Viaje cargarViaje() {
 	Viaje registro;
+	registro.idViaje = cantidadArticulos() + 1;
 
 	return registro;
 }
