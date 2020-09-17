@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="chofer.h" />
     <ClInclude Include="rlutil.h" />
+    <ClInclude Include="viajes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

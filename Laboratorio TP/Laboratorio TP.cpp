@@ -6,7 +6,7 @@ using namespace rlutil;
 using namespace std;
 
 int main(){
-    int opcionPrincipal; int opcionChoferes;
+    int opcionPrincipal; int opcionChoferes; int opcionViajes; int opcionReportes; int opcionConfiguracion;
     cls(); setColor(LIGHTCYAN);
     do {
         cls();
@@ -68,15 +68,123 @@ int main(){
             }while(opcionChoferes!=0);
             break;
         case 2:
+            do {
+                cls();
+                cout << "Menu Viajes" << endl;
+                cout << "--------------" << endl;
+                cout << "1) Nuevo Viaje" << endl;
+                cout << "2) Listar Viaje por IDViaje" << endl;
+                cout << "3) Listar todos los viajes" << endl;
+                cout << "4) Eliminar viaje" << endl;
+                cout << "--------------" << endl;
+                cout << "0) Salir del programa" << endl << endl;
+                cin >> opcionViajes;
+                switch (opcionViajes) {
+                case 1:
+                    cls();
+                    
+                    break;
+                case 2:
+                    cls();
+                    
+                    anykey();
+                    break;
+                case 3:
+                    cls();
+                    
+                    anykey();
+                    break;
+                case 4:
+                    cls();
+                    
+                    break;
+                case 0:
+                    break;
+                default:
+                    cls();
+                    cout << "Codigo erroneo" << endl;
+                    anykey();
+                    break;
+                }
+            } while (opcionViajes != 0);
             cls();
             anykey();
             break;
         case 3:
+            do {
+                cls();
+                cout << "Menu Reportes" << endl;
+                cout << "--------------" << endl;
+                cout << "1) Reporte 1" << endl;
+                cout << "2) Reporte 2" << endl;
+                cout << "3) Reporte 3" << endl;
+                cout << "--------------" << endl;
+                cout << "0) Salir del programa" << endl << endl;
+                cin >> opcionReportes;
+                switch (opcionReportes) {
+                case 1:
+                    cls();
+
+                    anykey();
+                    break;
+                case 2:
+                    cls();
+
+                    anykey();
+                    break;
+                case 3:
+                    cls();
+
+                    anykey();
+                    break;
+                case 0:
+                    break;
+                default:
+                    cls();
+                    cout << "Codigo erroneo" << endl;
+                    anykey();
+                    break;
+                }
+            } while (opcionReportes != 0);
             cls();
             anykey();
             break;
         case 4:
-            cls();
+            do {
+                cls();
+                cout << "Menu Configuracion" << endl;
+                cout << "--------------" << endl;
+                cout << "1) Realizar Backup" << endl;
+                cout << "2) Restaurar Backup" << endl;
+                cout << "3) Cargar datos de Inicio" << endl;
+                cout << "--------------" << endl;
+                cout << "0) Salir del programa" << endl << endl;
+                cin >> opcionConfiguracion;
+                switch (opcionConfiguracion) {
+                case 1:
+                    cls();
+
+                    anykey();
+                    break;
+                case 2:
+                    cls();
+
+                    anykey();
+                    break;
+                case 3:
+                    cls();
+
+                    anykey();
+                    break;
+                case 0:
+                    break;
+                default:
+                    cls();
+                    cout << "Codigo erroneo" << endl;
+                    anykey();
+                    break;
+                }
+            } while (opcionConfiguracion != 0);
             anykey();
             break;
         case 0:
