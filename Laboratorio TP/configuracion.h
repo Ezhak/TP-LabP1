@@ -23,10 +23,13 @@ int contarRegistrosChoferes() {
 }
 void realizarBackupChoferes() {
 	FILE* fp; FILE* fp2;
-	int cantidadRegistros; int it = 0;
+	int cantidadRegistros; int it = 0; int opcion;
 	Chofer registro; Chofer registrobackup;
 	Chofer* vectoresRegistro;
-
+	cout << "Desea realizar un backup del sistema?" << endl;
+	cout << "1. Si                           2. No" << endl;
+	cin >> opcion;
+	if (opcion == 2) return;
 	fp = fopen("choferes.dat", "rb");
 	if (fp == NULL) return;
 	cantidadRegistros = contarRegistrosChoferes();
@@ -50,7 +53,7 @@ void realizarBackupChoferes() {
 	if (fp2 == NULL) return;
 	fwrite(vectoresRegistro, sizeof registrobackup, cantidadRegistros, fp2);
 	fclose(fp2);
-	cout << endl <<"Backup hecho." << endl;
+	cout << endl <<"Backup de 'choferes.dat' hecho." << endl;
 
 	/**  //Este bloque lo use para verificar que el backup funcione, basicamente muestro el backup.
 	FILE* fp3;
@@ -64,12 +67,14 @@ void realizarBackupChoferes() {
 	**/
 
 	delete []vectoresRegistro;
-	anykey();
+	return;
 }
 void realizarBackupViajes() {
 
 	anykey();
 }
 //Restaurar backup
+void restaurarBackupChoferes() {
 
+}
 //Cargar datos de inicio
