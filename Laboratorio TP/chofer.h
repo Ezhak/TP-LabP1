@@ -3,6 +3,7 @@
 #include <cstring>
 #include <ctime>
 #include "rlutil.h"
+
 using namespace std;
 using namespace rlutil;
 //-------- Estructuras
@@ -181,7 +182,7 @@ void grabarRegistro(Chofer registro) {
 		cout << "Error. :)" << endl;
 		return;
 	}
-
+	
 	fwrite(&registro, sizeof registro, 1, fp);
 	fclose(fp);
 	return;

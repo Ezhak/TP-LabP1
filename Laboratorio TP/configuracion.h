@@ -46,14 +46,22 @@ void realizarBackupChoferes() {
 	//Una vez pasados los registros del archivo a la memoria (en un vector)
 	//Procedo a grabarlo en el backup
 
-	fp2 = fopen("choferes.bkp", "a+b");
+	fp2 = fopen("choferes.bkp", "w+b");
 	if (fp2 == NULL) return;
-
-	for (int j = 0; j < cantidadRegistros; j++){
-		fwrite(&vectoresRegistro[j], sizeof registrobackup, 1, fp2);
-	}
+	fwrite(vectoresRegistro, sizeof registrobackup, cantidadRegistros, fp2);
 	fclose(fp2);
 	cout << endl <<"Backup hecho." << endl;
+
+	/**  //Este bloque lo use para verificar que el backup funcione, basicamente muestro el backup.
+	FILE* fp3;
+	Chofer ayuda;
+	fp3 = fopen("choferes.bkp", "rb");
+	if (fp3 == NULL) return;
+	while (fread(&ayuda, sizeof ayuda, 1, fp3) == 1) {
+		mostrarRegistro(ayuda);
+	}
+	fclose(fp2);
+	**/
 
 	delete []vectoresRegistro;
 	anykey();
