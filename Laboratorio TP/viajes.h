@@ -18,6 +18,8 @@ struct Viaje {
 	bool estado;
 };
 //------------ ABL ------------
+// Prototipos
+int cantidadArticulos();
 // Alta
 Viaje cargarViaje() {
 	Viaje registro;

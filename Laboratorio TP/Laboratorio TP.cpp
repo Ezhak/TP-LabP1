@@ -1,6 +1,7 @@
 #include <iostream>
 #include "rlutil.h"
 #include "chofer.h"
+#include "configuracion.h"
 
 using namespace rlutil;
 using namespace std;
@@ -163,7 +164,7 @@ int main(){
                 switch (opcionConfiguracion) {
                 case 1:
                     cls();
-
+                    realizarBackupChoferes();
                     anykey();
                     break;
                 case 2:
@@ -185,12 +186,10 @@ int main(){
                     break;
                 }
             } while (opcionConfiguracion != 0);
-            anykey();
             break;
         case 0:
             cls();
             cout << "Adios" << endl;
-            anykey();
             break;
         default:
             cls();
