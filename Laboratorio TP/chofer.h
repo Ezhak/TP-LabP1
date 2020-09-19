@@ -38,12 +38,7 @@ bool validarFechaIngreso(tm fecha_actual, Fecha fecha_ing){
 	time_t t1 = mktime(&fecha_actual);
 	time_t t2 = mktime(&t_ing);
 
-	if (difftime(t1,t2) > 0) {
-		std::cout << "AAAAAAAAAAAAAAA" << std::endl;
-		return true;
-	}
-
-	return false;
+	return (difftime(t1, t2) > 0);
 }
 
 bool validarFechaVencimiento(tm fecha_actual, Fecha fecha_venc){
@@ -55,10 +50,7 @@ bool validarFechaVencimiento(tm fecha_actual, Fecha fecha_venc){
 	time_t t1 = mktime(&fecha_actual);
 	time_t t2 = mktime(&t_venc);
 
-	if (difftime(t1,t2) < 0)
-		return true;
-
-	return false;
+	return (difftime(t1, t2) < 0);
 }
 
 bool validarDNI(FILE *fp, char* dnibusqueda) {
