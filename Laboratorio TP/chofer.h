@@ -148,7 +148,7 @@ void altaRegistro() {
 	reg = cargarRegistro();
 
 	FILE* fp;
-	fp = fopen("registros.dat", "a+b");
+	fp = fopen("choferes.dat", "a+b");
 	if (!fp) {
 		cout << "Error. :)" << endl;
 		validarGrabado = false;
@@ -176,7 +176,7 @@ void altaRegistro() {
 void grabarRegistro(Chofer registro) {
 	FILE* fp;
 
-	fp = fopen("registros.dat", "ab");
+	fp = fopen("choferes.dat", "ab");
 	if (!fp) {
 		cout << "Error. :)" << endl;
 		return;
@@ -192,7 +192,7 @@ int bajaRegistro() {
 	Chofer registro;
 	int pos;
 	char dnibusqueda[10];
-	p = fopen("registros.dat", "rb+");
+	p = fopen("choferes.dat", "rb+");
 	if (p == NULL) {
 		cout << "Error. :)" << endl;
 		return -1;
@@ -225,7 +225,7 @@ int modificarRegistro() {
 	Chofer registro;
 	int pos;
 	char dnibusqueda[10];
-	p = fopen("registros.dat", "rb+");
+	p = fopen("choferes.dat", "rb+");
 	if (p == NULL) {
 		cout << "Error. :)" << endl;
 		return -1;
@@ -280,7 +280,7 @@ void mostrarRegistro(Chofer registro) {
 void listaRegistro() {
 	FILE* p;
 	Chofer registro;
-	p = fopen("registros.dat", "rb");
+	p = fopen("choferes.dat", "rb");
 	if (p == NULL) return;
 	while (fread(&registro, sizeof registro, 1, p) == 1) {
 		if (registro.estado == true) {
@@ -295,7 +295,7 @@ int listaporDNI() {
 	Chofer registro;
 	int pos;
 	char dnibusqueda[10];
-	p = fopen("registros.dat", "rb+");
+	p = fopen("choferes.dat", "rb+");
 	if (p == NULL) {
 		cout << "Error. :)" << endl;
 		return -1;
