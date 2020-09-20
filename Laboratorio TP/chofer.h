@@ -46,10 +46,10 @@ bool existeCUIT(FILE *fp, char* cuitbusqueda) {
 	fseek(fp, 0, SEEK_SET);  // resetear indicador de posición 0 + SEEK_SET (0)
 	while (fread(&registro, sizeof registro, 1, fp)) {
 		if (!strcmp(registro.cuit, cuitbusqueda) && registro.estado)
-			return false;
+			return true;
 	}
 
-	return true;
+	return false;
 }
 
 Chofer cargarRegistroChofer() {
@@ -125,13 +125,10 @@ void nuevoChofer() {
 
 	reg = cargarRegistroChofer();
 
-	tm tmFechaIng = crearTmFecha(reg.fecha_ingreso);
-	tm tmFechaVenc = crearTmFecha(reg.fecha_vencimiento);
-
 	if (existeDNI(fp, reg.dni) ||
 	    existeCUIT(fp, reg.cuit) ||
-	    compararFechaActual(tmFechaIng) > 0 ||
-	    compararFechaActual(tmFechaVenc) < 0) {
+	    compararFechaActual(reg.fecha_ingreso) < 0 ||
+	    compararFechaActual(reg.fecha_vencimiento) > 0) {
 		cout << "Ya existe ese DNI o CUIT, por favor, ingrese otro DNI o CUIT" << endl;
 		cout << "O bien la Fecha de Ingreso/Vencimiento es invalida." << endl;
 		anykey();
