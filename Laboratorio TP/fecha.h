@@ -18,15 +18,16 @@ tm crearTmFecha(Fecha fecha) {
 	return tmFecha;
 }
 
-int compararFechaActual(tm fecha){
-	time_t timer = time(0);
+int compararFechaActual(Fecha fecha){
 	// localtime() devuelve un puntero a la estructura estática interna
 	// std::tm.
 	// Recordar que el operador 'struct->object' es idéntico a '(*struct).object'
-	struct tm* fechaActual = localtime(&timer);
+	time_t timer = time(0);
+	struct tm fechaActual = *localtime(&timer);
+	struct tm tmFecha = crearTmFecha(fecha);
 
-	time_t t1 = mktime(fechaActual);
-	time_t t2 = mktime(&fecha);
+	time_t t1 = mktime(&fechaActual);
+	time_t t2 = mktime(&tmFecha);
 
 	return difftime(t1, t2);
 }
