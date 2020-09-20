@@ -1,17 +1,15 @@
-#pragma once
+#ifndef CHOFER_H
+#define CHOFER_H
+
 #include <iostream>
 #include <cstring>
 #include <ctime>
+#include "fecha.h"
 #include "rlutil.h"
 
 using namespace std;
 using namespace rlutil;
 //-------- Estructuras
-struct Fecha {
-	int dia;
-	int mes;
-	int anio;
-};
 struct Chofer {
 	char dni[10];
 	char apellido[50];
@@ -28,7 +26,7 @@ struct Chofer {
 
 //------------ ABML ------------
 //Prototipo
-void grabarRegistro(Chofer registro);
+void escribirRegistroChofer(Chofer registro);
 
 // Alta
 bool validarFechaIngreso(tm fecha_actual, Fecha fecha_ing){
@@ -78,7 +76,7 @@ bool validarCUIT(FILE *fp, char* cuitbusqueda) {
 	return true;
 }
 
-Chofer cargarRegistro() {
+Chofer cargarRegistroChofer() {
 	Chofer registro;
 	char* occurrence;
 
@@ -137,7 +135,7 @@ Chofer cargarRegistro() {
 
 	return registro;
 }
-void altaRegistro() {
+void nuevoChofer() {
 	time_t timer = time(0);
 	// localtime() devuelve un puntero a la estructura estática interna
 	// std::tm.
@@ -147,7 +145,7 @@ void altaRegistro() {
 	bool validarGrabado = true;
 	Chofer reg;
 
-	reg = cargarRegistro();
+	reg = cargarRegistroChofer();
 
 	FILE* fp;
 	fp = fopen("choferes.dat", "a+b");
@@ -163,11 +161,11 @@ void altaRegistro() {
 	    !validarFechaVencimiento(*tmPtr, reg.fecha_vencimiento)) {
 		cout << "Ya existe ese DNI o CUIT, por favor, ingrese otro DNI o CUIT" << endl;
 		cout << "O bien la Fecha de Ingreso/Vencimiento es invalida." << endl;
-		anykey();
+		system("sleep 5");
 		return;
 	}
 	else {
-		grabarRegistro(reg);
+		escribirRegistroChofer(reg);
 		if (validarGrabado)
 			cout << "Registros grabados en archivo correctamente!" << endl << endl;
 		else
@@ -176,7 +174,7 @@ void altaRegistro() {
 
 	fclose(fp);
 }
-void grabarRegistro(Chofer registro) {
+void escribirRegistroChofer(Chofer registro) {
 	FILE* fp;
 
 	fp = fopen("choferes.dat", "ab");
@@ -191,7 +189,7 @@ void grabarRegistro(Chofer registro) {
 	return;
 }
 // Baja
-int bajaRegistro() {
+int eliminarChofer() {
 	FILE* fp;
 	Chofer registro;
 	char* occurrence;
@@ -232,7 +230,7 @@ int bajaRegistro() {
 	return -1;
 }
 // Modificacion
-int modificarRegistro() {
+int modificarChofer() {
 	FILE* fp;
 	Chofer registro;
 	char* occurrence;
@@ -280,7 +278,7 @@ int modificarRegistro() {
 	return -1;
 }
 // Lista
-void mostrarRegistro(Chofer registro) {
+void mostrarRegistroChofer(Chofer registro) {
 	if (registro.estado) {
 		cout << "DNI: " << registro.dni << endl;
 		cout << "Apellido: " << registro.apellido << endl;
@@ -300,7 +298,7 @@ void mostrarRegistro(Chofer registro) {
 	}
 }
 
-void listaRegistro() {
+void listarChoferes() {
 	FILE* fp;
 	Chofer registro;
 
@@ -309,14 +307,14 @@ void listaRegistro() {
 
 	while (fread(&registro, sizeof registro, 1, fp)) {
 		if (registro.estado)
-			mostrarRegistro(registro);
+			mostrarRegistroChofer(registro);
 	}
 
 	fclose(fp);
-	anykey();
+	system("sleep 5");
 }
 
-int listaporDNI() {
+int listarChoferDNI() {
 	FILE* fp;
 	Chofer registro;
 	char* occurrence;
@@ -340,7 +338,7 @@ int listaporDNI() {
 	while (fread(&registro, sizeof registro, 1, fp) == 1) {
 		if (!strcmp(registro.dni, dnibusqueda) && registro.estado) {  //Cuando encuentra coincidencia entre el DNI dado con registro.dni
 			cout << endl << "----------------------------------------" << endl;     //Te muestra el registro que coincida con el DNI.
-			mostrarRegistro(registro);
+			mostrarRegistroChofer(registro);
 
 			fclose(fp);
 			return pos;
@@ -353,3 +351,5 @@ int listaporDNI() {
 	fclose(fp);
 	return -1;
 }
+
+#endif // CHOFER_H

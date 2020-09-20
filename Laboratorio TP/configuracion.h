@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CONFIGURACION_H
+#define CONFIGURACION_H
+
 #include "chofer.h"
 #include "viajes.h"
 
@@ -78,3 +80,5 @@ void restaurarBackupChoferes() {
 
 }
 //Cargar datos de inicio
+
+# endif // CONFIGURACION_H

@@ -1,7 +1,8 @@
 #include <iostream>
 #include "rlutil.h"
-#include "chofer.h"
 #include "configuracion.h"
+#include "chofer.h"
+#include "viajes.h"
 
 using namespace rlutil;
 using namespace std;
@@ -49,25 +50,25 @@ int main(){
 				switch (opcionChoferes) {
 				case 1:
 					cls();
-					altaRegistro();
+					nuevoChofer();
 					break;
 				case 2:
 					cls();
-					modificarRegistro();
+					modificarChofer();
 					anykey();
 					break;
 				case 3:
 					cls();
-					listaporDNI();
+					listarChoferDNI();
 					anykey();
 					break;
 				case 4:
 					cls();
-					listaRegistro();
+					listarChoferes();
 					break;
 				case 5:
 					cls();
-					bajaRegistro();
+					eliminarChofer();
 					anykey();
 					break;
 				case 0:
@@ -98,6 +99,7 @@ int main(){
 				switch (opcionViajes) {
 				case 1:
 					cls();
+					nuevoViaje();
 					break;
 				case 2:
 					cls();

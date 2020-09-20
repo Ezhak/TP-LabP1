@@ -1,8 +1,12 @@
-#pragma once
-#include "chofer.h"
+#ifndef VIAJES_H
+#define VIAJES_H
 
-using namespace std;
+#include <iostream>
+#include "fecha.h"
+#include "rlutil.h"
+
 using namespace rlutil;
+using namespace std;
 
 //-------- Estructuras
 struct Viaje {
@@ -21,7 +25,7 @@ struct Viaje {
 // Prototipos
 int cantidadArticulos();
 // Alta
-Viaje cargarViaje() {
+Viaje nuevoViaje() {
 	Viaje registro;
 	registro.idViaje = cantidadArticulos() + 1;
 
@@ -53,3 +57,5 @@ int cantidadArticulos() { // en el apartado de Alta, especificamente en cargarVi
 
 	return cantidad;
 }
+
+#endif // VIAJES_H
