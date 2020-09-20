@@ -2,7 +2,7 @@
 #define CONFIGURACION_H
 
 #include "chofer.h"
-#include "viajes.h"
+#include "viaje.h"
 
 using namespace std;
 using namespace rlutil;

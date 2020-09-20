@@ -2,7 +2,7 @@
 #include "rlutil.h"
 #include "configuracion.h"
 #include "chofer.h"
-#include "viajes.h"
+#include "viaje.h"
 
 using namespace rlutil;
 using namespace std;
