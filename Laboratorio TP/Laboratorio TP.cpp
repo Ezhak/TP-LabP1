@@ -90,9 +90,9 @@ int main(){
 				cout << "1) NUEVO VIAJE" << endl;
 				cout << "2) LISTAR VIAJE POR IDVIAJE" << endl;
 				cout << "3) LISTAR TODOS LOS VIAJES" << endl;
-				cout << "4) Eliminar viaje" << endl;
+				cout << "4) ELIMINAR VIAJE" << endl;
 				cout << "--------------" << endl;
-				cout << "0) SALIR DEL PROGRAMA" << endl << endl;
+				cout << "0) VOLVER AL MENÚ PRINCIPAL" << endl << endl;
 
 				cin >> opcionViajes;
 
@@ -100,17 +100,22 @@ int main(){
 				case 1:
 					cls();
 					nuevoViaje();
+					anykey();
 					break;
 				case 2:
 					cls();
+					listarViajeID();
 					anykey();
 					break;
 				case 3:
 					cls();
+					listarViajes();
 					anykey();
 					break;
 				case 4:
 					cls();
+					// eliminarViaje();
+					anykey();
 					break;
 				case 0:
 					break;
