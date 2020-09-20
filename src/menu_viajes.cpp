@@ -24,18 +24,22 @@ void menuViajes() {
 		case 1:
 			cls();
 			nuevoViaje();
+			anykey();
 			break;
 		case 2:
 			cls();
 			listarViajeID();
+			anykey();
 			break;
 		case 3:
 			cls();
 			listarViajes();
+			anykey();
 			break;
 		case 4:
 			cls();
-			// eliminarViaje();
+			eliminarViaje();
+			anykey();
 			break;
 		case 0:
 			break;

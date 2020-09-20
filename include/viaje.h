@@ -29,6 +29,7 @@ void nuevoViaje();
 bool escribirRegistroViaje(Viaje reg);
 
 // Baja
+void eliminarViaje();
 
 // Lista
 void mostrarRegistroViaje(Viaje reg);

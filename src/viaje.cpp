@@ -128,6 +128,39 @@ bool escribirRegistroViaje(Viaje reg) {
 }
 
 // Baja
+void eliminarViaje()
+{
+	FILE* fp;
+	Viaje reg;
+	int id;
+	long offset = 0;
+
+	fp = fopen("viajes.dat", "rb+");
+	if (!fp) {
+		cout << "Error al abrir archivo!" << endl;
+		return;
+	}
+
+	cout << "Ingrese el ID del viaje: ";
+	cin >> id;
+
+	cin.ignore();
+
+	while (fread(&reg, sizeof reg, 1, fp)) {
+		if (reg.idViaje == id) {
+			reg.estado = false;
+			cout << "Borrando viaje...";
+			fseek(fp, offset, SEEK_SET);
+			fwrite(&reg, sizeof reg, 1, fp);
+			fclose(fp);
+			return;
+		}
+		offset += sizeof reg;
+	}
+
+	cout << "Viaje inexistente." << endl;
+	fclose(fp);
+}
 
 // Lista
 void listarViajeID() {
