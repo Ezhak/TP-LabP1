@@ -94,6 +94,8 @@ StyleCopReport.xml
 *.scc
 *.sln
 *.vcxproj*
+*.dat
+*.bkp
 
 # Chutzpah Test files
 _Chutzpah*
