@@ -43,7 +43,7 @@ int main(){
 				cout << "4) LISTAR TODOS LOS CHOFERES" << endl;
 				cout << "5) ELIMINAR CHOFER" << endl;
 				cout << "-------------" << endl;
-				cout << "0) SALIR DEL PROGRAMA" << endl << endl;
+				cout << "0) VOLVER AL MENÚ PRINCIPAL" << endl << endl;
 
 				cin >> opcionChoferes;
 
@@ -51,6 +51,7 @@ int main(){
 				case 1:
 					cls();
 					nuevoChofer();
+					anykey();
 					break;
 				case 2:
 					cls();
@@ -65,6 +66,7 @@ int main(){
 				case 4:
 					cls();
 					listarChoferes();
+					anykey();
 					break;
 				case 5:
 					cls();
@@ -140,7 +142,7 @@ int main(){
 				cout << "2) REPORTE 2" << endl;
 				cout << "3) REPORTE 3" << endl;
 				cout << "-------------" << endl;
-				cout << "0) SALIR DEL PROGRAMA" << endl << endl;
+				cout << "0) VOLVER AL MENÚ PRINCIPAL" << endl << endl;
 
 				cin >> opcionReportes;
 
@@ -180,7 +182,7 @@ int main(){
 				cout << "2) RESTAURAR BACKUP" << endl;
 				cout << "3) CARGAR DATOS DE INICIO" << endl;
 				cout << "------------------" << endl;
-				cout << "0) SALIR DEL PROGRAMA" << endl << endl;
+				cout << "0) VOLVER AL MENÚ PRINCIPAL" << endl << endl;
 
 				cin >> opcionConfiguracion;
 
@@ -192,10 +194,12 @@ int main(){
 					break;
 				case 2:
 					cls();
+					// restaurarBackup();
 					anykey();
 					break;
 				case 3:
 					cls();
+					// cargarDatosInicio();
 					anykey();
 					break;
 				case 0:

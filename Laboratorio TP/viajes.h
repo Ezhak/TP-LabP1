@@ -147,7 +147,6 @@ bool escribirRegistroViaje(Viaje reg) {
 	fp = fopen("viajes.dat", "ab");
 	if (!fp) {
 		cout << "Error al abrir archivo!" << endl;
-		anykey();
 		return false;
 	}
 	
@@ -155,7 +154,6 @@ bool escribirRegistroViaje(Viaje reg) {
 	if (ferror(fp)) {
 		cout << "Error al escribir archivo!" << endl;
 		fclose(fp);
-		anykey();
 		return false;
 	}
 
@@ -183,26 +181,6 @@ void mostrarRegistroViaje(Viaje reg) {
 	cout << "----------------------------------" << endl;
 }
 
-void listarViajes() {
-	FILE* fp;
-	Viaje reg;
-
-	fp = fopen("viajes.dat", "rb");
-	if (!fp) {
-		cout << "Error al escribir archivo!" << endl;
-		return;
-	}
-
-	cin.ignore();
-
-	while (fread(&reg, sizeof reg, 1, fp)) {
-		if (reg.estado)
-			mostrarRegistroViaje(reg);
-	}
-
-	fclose(fp);
-}
-
 void listarViajeID() {
 	FILE* fp;
 	Viaje reg;
@@ -228,6 +206,26 @@ void listarViajeID() {
 	}
 
 	cout << "Viaje inexistente." << endl;
+	fclose(fp);
+}
+
+void listarViajes() {
+	FILE* fp;
+	Viaje reg;
+
+	fp = fopen("viajes.dat", "rb");
+	if (!fp) {
+		cout << "Error al escribir archivo!" << endl;
+		return;
+	}
+
+	cin.ignore();
+
+	while (fread(&reg, sizeof reg, 1, fp)) {
+		if (reg.estado)
+			mostrarRegistroViaje(reg);
+	}
+
 	fclose(fp);
 }
 

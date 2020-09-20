@@ -9,7 +9,7 @@
 
 using namespace std;
 using namespace rlutil;
-//-------- Estructuras
+
 struct Chofer {
 	char dni[10];
 	char apellido[50];
@@ -24,9 +24,8 @@ struct Chofer {
 	bool estado;
 };
 
-//------------ ABML ------------
-//Prototipo
-void escribirRegistroChofer(Chofer registro);
+// Prototipos
+bool escribirRegistroChofer(Chofer registro);
 
 // Alta
 bool existeDNI(FILE *fp, char* dnibusqueda) {
@@ -40,6 +39,7 @@ bool existeDNI(FILE *fp, char* dnibusqueda) {
 
 	return false;
 }
+
 bool existeCUIT(FILE *fp, char* cuitbusqueda) {
 	Chofer registro;
 
@@ -89,8 +89,9 @@ Chofer cargarRegistroChofer() {
 		occurrence = strpbrk(registro.cuit, " \t");
 	} while (occurrence || !registro.cuit[0]);
 
-	cout << "Telefono: " << endl;
+	cout << "Telefono: ";
 	cin.getline(registro.telefono, 15);
+
 	cout << "Fecha de Ingreso: " << endl;
 	cout << "Dia: " << endl;
 	cin >> registro.fecha_ingreso.dia;
@@ -98,68 +99,79 @@ Chofer cargarRegistroChofer() {
 	cin >> registro.fecha_ingreso.mes;
 	cout << "Anio: " << endl;
 	cin >> registro.fecha_ingreso.anio;
-	cout << "Fecha de vencimiento del registro: " << endl;
-	cout << "Dia: " << endl;
-	cin >> registro.fecha_vencimiento.dia;
-	cout << "Mes: " << endl;
-	cin >> registro.fecha_vencimiento.mes;
-	cout << "Anio: " << endl;
-	cin >> registro.fecha_vencimiento.anio;
-	cout << "Tipo de registro: (1-3)" << endl;
-	cin >> registro.tipoRegistro;
-	registro.estado = true;
 
+	cout << "Fecha de vencimiento del registro: " << endl;
+	cout << "Dia: ";
+	cin >> registro.fecha_vencimiento.dia;
+	cout << "Mes: ";
+	cin >> registro.fecha_vencimiento.mes;
+	cout << "Anio: ";
+	cin >> registro.fecha_vencimiento.anio;
+
+	cout << "Tipo de registro (1-3): ";
+	cin >> registro.tipoRegistro;
+
+	registro.estado = true;
 	return registro;
 }
 void nuevoChofer() {
-	bool validarGrabado = true;
 	Chofer reg;
 
 	FILE* fp;
 	fp = fopen("choferes.dat", "a+b");
 	if (!fp) {
-		cout << "Error. :)" << endl;
-		validarGrabado = false;
+		cout << "Error al abrir archivo!" << endl;
 		return;
 	}
 
 	reg = cargarRegistroChofer();
 
-	if (existeDNI(fp, reg.dni) ||
-	    existeCUIT(fp, reg.cuit) ||
-	    compararFechaActual(reg.fecha_ingreso) < 0 ||
-	    compararFechaActual(reg.fecha_vencimiento) > 0) {
-		cout << "Ya existe ese DNI o CUIT, por favor, ingrese otro DNI o CUIT" << endl;
-		cout << "O bien la Fecha de Ingreso/Vencimiento es invalida." << endl;
-		anykey();
+	if (existeDNI(fp, reg.dni)) {
+		cout << "DNI ya registrado." << endl;
 		return;
 	}
-	else {
-		escribirRegistroChofer(reg);
-		if (validarGrabado)
-			cout << "Registros grabados en archivo correctamente!" << endl << endl;
-		else
-			cout << "No se pudo grabar. :)" << endl << endl;
+
+	if (existeCUIT(fp, reg.cuit)) {
+		cout << "CUIT ya registrado." << endl;
+		return;
 	}
 
-	fclose(fp);
+	if (compararFechaActual(reg.fecha_ingreso) < 0) {
+		cout << "Fecha de ingreso inválida." << endl;
+		return;
+	}
+
+	if (compararFechaActual(reg.fecha_vencimiento) > 0) {
+		cout << "Fecha de vencimiento inválida." << endl;
+		return;
+	}
+
+	if (!escribirRegistroChofer(reg))
+		return;
 }
-void escribirRegistroChofer(Chofer registro) {
+
+bool escribirRegistroChofer(Chofer registro) {
 	FILE* fp;
 
 	fp = fopen("choferes.dat", "ab");
 	if (!fp) {
-		cout << "Error. :)" << endl;
-		return;
+		cout << "Error al abrir el archivo!" << endl;
+		return false;
 	}
 	
 	fwrite(&registro, sizeof registro, 1, fp);
+	if (ferror(fp)) {
+		cout << "Error al escribir el archivo!" << endl;
+		fclose(fp);
+		return false;
+	}
 
 	fclose(fp);
-	return;
+	return true;
 }
+
 // Baja
-int eliminarChofer() {
+void eliminarChofer() {
 	FILE* fp;
 	Chofer registro;
 	char* occurrence;
@@ -168,28 +180,44 @@ int eliminarChofer() {
 
 	fp = fopen("choferes.dat", "rb+");
 	if (!fp) {
-		cout << "Error. :)" << endl;
-		return -1;
+		cout << "Error al abrir archivo!" << endl;
+		return;
 	}
 
 	do {
 		cin.ignore();
-		cout << "Ingrese el DNI a dar de baja" << endl; 
+		cout << "Ingrese el DNI a dar de baja: ";
 		cin.getline(dnibusqueda, 10);
 		occurrence = strpbrk(dnibusqueda, " \t");
 	} while (occurrence || !dnibusqueda[0]);
 
 	while (fread(&registro, sizeof registro, 1, fp)) {
-		if (!strcmp(registro.dni, dnibusqueda) && registro.estado) { //Esta funcion esta explicada en validarDNI/CUIT()
+		if (!strcmp(registro.dni, dnibusqueda) && registro.estado) {
 			registro.estado = false;
 
-			fseek(fp, pos * sizeof registro, 0); //fseek lo que hace es ubicar el cursor en el archivo, va a ir posicionandose a medida que itera
-			fwrite(&registro, sizeof registro, 1, fp); //Es decir, la posicion * lo que pesa el registro.
+			// fseek pone la posición del archivo sobre el
+			// registro encontrado.
+			//
+			// Desde el inicio:
+			//
+			//     pos * sizeof registro + SEEK_SET
+			//                             (siempre 0)
+			//
+			// Desde el actual (fread() asigna y avanza, por lo
+			// que hay que restar un registro):
+			//
+			//     -pos * sizeof registro + SEEK_CUR
+			//                              (actual)
+			//
+			// Es útil dependiendo el tamaño del archivo, no
+			// queremos reposicionar empezando del comienzo si
+			// llegamos casi al final, y viceversa.
+			fseek(fp, pos * sizeof registro, 0);
+			fwrite(&registro, sizeof registro, 1, fp);
 
-			cout << "Chofer eliminado, registro dado de baja" << endl;
-
+			cout << "Chofer eliminado. Registro dado de baja." << endl;
 			fclose(fp);
-			return pos;
+			return;
 		}
 		pos++;
 	}
@@ -197,10 +225,11 @@ int eliminarChofer() {
 	cout << "No se pudo dar de baja. :)" << endl;
 
 	fclose(fp);
-	return -1;
+	return;
 }
+
 // Modificacion
-int modificarChofer() {
+void modificarChofer() {
 	FILE* fp;
 	Chofer registro;
 	char* occurrence;
@@ -209,8 +238,8 @@ int modificarChofer() {
 
 	fp = fopen("choferes.dat", "rb+");
 	if (!fp) {
-		cout << "Error. :)" << endl;
-		return -1;
+		cout << "Error al escribir archivo!" << endl;
+		return;
 	}
 
 	do {
@@ -237,7 +266,7 @@ int modificarChofer() {
 			fwrite(&registro, sizeof registro, 1, fp);
 
 			fclose(fp);
-			return pos;
+			return;
 		}
 		pos++;
 	}
@@ -245,56 +274,38 @@ int modificarChofer() {
 	cout << "No existe ese DNI" << endl;
 
 	fclose(fp);
-	return -1;
+	return;
 }
+
 // Lista
 void mostrarRegistroChofer(Chofer registro) {
-	if (registro.estado) {
-		cout << "DNI: " << registro.dni << endl;
-		cout << "Apellido: " << registro.apellido << endl;
-		cout << "Nombre: " << registro.nombre << endl;
-		cout << "CUIT: " << registro.cuit << endl;
-		cout << "Telefono: " << registro.telefono << endl;
-		cout << "Fecha de Ingreso: " << endl;
-		cout << "\tDia: " << registro.fecha_ingreso.dia << endl;
-		cout << "\tMes: " << registro.fecha_ingreso.mes << endl;
-		cout << "\tAnio: " << registro.fecha_ingreso.anio << endl;
-		cout << "Fecha de vencimiento del registro: " << endl;
-		cout << "\tDia: " << registro.fecha_vencimiento.dia << endl;
-		cout << "\tMes: " << registro.fecha_vencimiento.mes << endl;
-		cout << "\tAnio: " << registro.fecha_vencimiento.anio << endl;
-		cout << "Tipo de registro (1-3): " << registro.tipoRegistro << endl;
-		cout << "----------------------------------------" << endl;
-	}
+	cout << "DNI: " << registro.dni << endl;
+	cout << "Apellido: " << registro.apellido << endl;
+	cout << "Nombre: " << registro.nombre << endl;
+	cout << "CUIT: " << registro.cuit << endl;
+	cout << "Telefono: " << registro.telefono << endl;
+	cout << "Fecha de Ingreso: " << endl;
+	cout << "\tDia: " << registro.fecha_ingreso.dia << endl;
+	cout << "\tMes: " << registro.fecha_ingreso.mes << endl;
+	cout << "\tAnio: " << registro.fecha_ingreso.anio << endl;
+	cout << "Fecha de vencimiento del registro: " << endl;
+	cout << "\tDia: " << registro.fecha_vencimiento.dia << endl;
+	cout << "\tMes: " << registro.fecha_vencimiento.mes << endl;
+	cout << "\tAnio: " << registro.fecha_vencimiento.anio << endl;
+	cout << "Tipo de registro (1-3): " << registro.tipoRegistro << endl;
+	cout << "----------------------------------------" << endl;
 }
 
-void listarChoferes() {
-	FILE* fp;
-	Chofer registro;
-
-	fp = fopen("choferes.dat", "rb");
-	if (!fp) return;
-
-	while (fread(&registro, sizeof registro, 1, fp)) {
-		if (registro.estado)
-			mostrarRegistroChofer(registro);
-	}
-
-	fclose(fp);
-	anykey();
-}
-
-int listarChoferDNI() {
+void listarChoferDNI() {
 	FILE* fp;
 	Chofer registro;
 	char* occurrence;
-	int pos;
 	char dnibusqueda[10];
 
 	fp = fopen("choferes.dat", "rb+");
 	if (!fp) {
-		cout << "Error. :)" << endl;
-		return -1;
+		cout << "Error al abrir archivo!" << endl;
+		return;
 	}
 
 	do {
@@ -304,22 +315,38 @@ int listarChoferDNI() {
 		occurrence = strpbrk(dnibusqueda, " \t");
 	} while (occurrence || !dnibusqueda[0]);
 
-	pos = 0;
 	while (fread(&registro, sizeof registro, 1, fp) == 1) {
 		if (!strcmp(registro.dni, dnibusqueda) && registro.estado) {  //Cuando encuentra coincidencia entre el DNI dado con registro.dni
 			cout << endl << "----------------------------------------" << endl;     //Te muestra el registro que coincida con el DNI.
 			mostrarRegistroChofer(registro);
-
 			fclose(fp);
-			return pos;
+			return;
 		}
-		pos++;
 	}
 
 	cout << "No existe ese DNI" << endl;
 
 	fclose(fp);
-	return -1;
+	return;
+}
+
+void listarChoferes() {
+	FILE* fp;
+	Chofer registro;
+
+	fp = fopen("choferes.dat", "rb");
+	if (!fp) {
+		cout << "Error al abrir archivo!" << endl;
+		return;
+	}
+
+	cin.ignore();
+	while (fread(&registro, sizeof registro, 1, fp)) {
+		if (registro.estado)
+			mostrarRegistroChofer(registro);
+	}
+
+	fclose(fp);
 }
 
 #endif // CHOFER_H
