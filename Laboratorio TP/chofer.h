@@ -240,7 +240,7 @@ int modificarRegistro() {
 	char dnibusqueda[10];
 
 	fp = fopen("choferes.dat", "rb+");
-	if (fp) {
+	if (!fp) {
 		cout << "Error. :)" << endl;
 		return -1;
 	}
