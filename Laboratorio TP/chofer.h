@@ -29,42 +29,18 @@ struct Chofer {
 void escribirRegistroChofer(Chofer registro);
 
 // Alta
-bool validarFechaIngreso(tm fecha_actual, Fecha fecha_ing){
-	struct tm t_ing = {0};
-	t_ing.tm_mday = fecha_ing.dia;
-	t_ing.tm_mon = fecha_ing.mes - 1;
-	t_ing.tm_year = fecha_ing.anio - 1900;
-
-	time_t t1 = mktime(&fecha_actual);
-	time_t t2 = mktime(&t_ing);
-
-	return (difftime(t1, t2) > 0);
-}
-
-bool validarFechaVencimiento(tm fecha_actual, Fecha fecha_venc){
-	struct tm t_venc = {0};
-	t_venc.tm_mday = fecha_venc.dia;
-	t_venc.tm_mon = fecha_venc.mes - 1;
-	t_venc.tm_year = fecha_venc.anio - 1900;
-
-	time_t t1 = mktime(&fecha_actual);
-	time_t t2 = mktime(&t_venc);
-
-	return (difftime(t1, t2) < 0);
-}
-
-bool validarDNI(FILE *fp, char* dnibusqueda) {
+bool existeDNI(FILE *fp, char* dnibusqueda) {
 	Chofer registro;
 
 	fseek(fp, 0, SEEK_SET);
 	while (fread(&registro, sizeof registro, 1, fp)) {
 		if (!strcmp(registro.dni, dnibusqueda) && registro.estado)
-			return false;
+			return true;
 	}
 
-	return true;
+	return false;
 }
-bool validarCUIT(FILE *fp, char* cuitbusqueda) {
+bool existeCUIT(FILE *fp, char* cuitbusqueda) {
 	Chofer registro;
 
 	fseek(fp, 0, SEEK_SET);  // resetear indicador de posición 0 + SEEK_SET (0)
@@ -136,16 +112,8 @@ Chofer cargarRegistroChofer() {
 	return registro;
 }
 void nuevoChofer() {
-	time_t timer = time(0);
-	// localtime() devuelve un puntero a la estructura estática interna
-	// std::tm.
-	// Recordar que el operador 'struct->object' es idéntico a '(*struct).object'
-	struct tm* tmPtr = localtime(&timer);
-
 	bool validarGrabado = true;
 	Chofer reg;
-
-	reg = cargarRegistroChofer();
 
 	FILE* fp;
 	fp = fopen("choferes.dat", "a+b");
@@ -155,10 +123,15 @@ void nuevoChofer() {
 		return;
 	}
 
-	if (!validarDNI(fp, reg.dni) ||
-	    !validarCUIT(fp, reg.cuit) ||
-	    !validarFechaIngreso(*tmPtr, reg.fecha_ingreso) ||
-	    !validarFechaVencimiento(*tmPtr, reg.fecha_vencimiento)) {
+	reg = cargarRegistroChofer();
+
+	tm tmFechaIng = crearTmFecha(reg.fecha_ingreso);
+	tm tmFechaVenc = crearTmFecha(reg.fecha_vencimiento);
+
+	if (existeDNI(fp, reg.dni) ||
+	    existeCUIT(fp, reg.cuit) ||
+	    compararFechaActual(tmFechaIng) > 0 ||
+	    compararFechaActual(tmFechaVenc) < 0) {
 		cout << "Ya existe ese DNI o CUIT, por favor, ingrese otro DNI o CUIT" << endl;
 		cout << "O bien la Fecha de Ingreso/Vencimiento es invalida." << endl;
 		system("sleep 5");
