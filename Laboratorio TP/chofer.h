@@ -134,7 +134,7 @@ void nuevoChofer() {
 	    compararFechaActual(tmFechaVenc) < 0) {
 		cout << "Ya existe ese DNI o CUIT, por favor, ingrese otro DNI o CUIT" << endl;
 		cout << "O bien la Fecha de Ingreso/Vencimiento es invalida." << endl;
-		system("sleep 5");
+		anykey();
 		return;
 	}
 	else {
@@ -284,7 +284,7 @@ void listarChoferes() {
 	}
 
 	fclose(fp);
-	system("sleep 5");
+	anykey();
 }
 
 int listarChoferDNI() {
