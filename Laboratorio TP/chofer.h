@@ -29,6 +29,7 @@ struct Chofer {
 //------------ ABML ------------
 //Prototipo
 void grabarRegistro(Chofer registro);
+
 // Alta
 bool validarFechaIngreso(tm fecha_actual, Fecha fecha_ing){
 	struct tm t_ing = {0};
@@ -59,7 +60,7 @@ bool validarDNI(FILE *fp, char* dnibusqueda) {
 
 	fseek(fp, 0, SEEK_SET);
 	while (fread(&registro, sizeof registro, 1, fp)) {
-		if (!strcmp(registro.dni, dnibusqueda) && (registro.estado == true))
+		if (!strcmp(registro.dni, dnibusqueda) && registro.estado)
 			return false;
 	}
 
@@ -70,7 +71,7 @@ bool validarCUIT(FILE *fp, char* cuitbusqueda) {
 
 	fseek(fp, 0, SEEK_SET);  // resetear indicador de posición 0 + SEEK_SET (0)
 	while (fread(&registro, sizeof registro, 1, fp)) {
-		if (!strcmp(registro.cuit, cuitbusqueda) && (registro.estado == true))
+		if (!strcmp(registro.cuit, cuitbusqueda) && registro.estado)
 			return false;
 	}
 
@@ -79,7 +80,7 @@ bool validarCUIT(FILE *fp, char* cuitbusqueda) {
 
 Chofer cargarRegistro() {
 	Chofer registro;
-	char *occurrence;
+	char* occurrence;
 
 	cin.ignore();
 
@@ -172,6 +173,7 @@ void altaRegistro() {
 		else
 			cout << "No se pudo grabar. :)" << endl << endl;
 	}
+
 	fclose(fp);
 }
 void grabarRegistro(Chofer registro) {
@@ -184,83 +186,102 @@ void grabarRegistro(Chofer registro) {
 	}
 	
 	fwrite(&registro, sizeof registro, 1, fp);
+
 	fclose(fp);
 	return;
 }
 // Baja
 int bajaRegistro() {
-	FILE* p;
+	FILE* fp;
 	Chofer registro;
-	int pos;
+	char* occurrence;
 	char dnibusqueda[10];
-	p = fopen("choferes.dat", "rb+");
-	if (p == NULL) {
+	int pos = 0;
+
+	fp = fopen("choferes.dat", "rb+");
+	if (!fp) {
 		cout << "Error. :)" << endl;
 		return -1;
 	}
+
 	do {
 		cin.ignore();
 		cout << "Ingrese el DNI a dar de baja" << endl; 
 		cin.getline(dnibusqueda, 10);
-		pos = strspn(dnibusqueda, " \t"); //Esta parte la explique en cargarRegistro();
-	} while (dnibusqueda[pos] == 0);
-	pos = 0;
-	while (fread(&registro, sizeof registro, 1, p) == 1) {
-		if ((strcmp(registro.dni, dnibusqueda) == 0) && registro.estado == true) { //Esta funcion esta explicada en validarDNI/CUIT()
+		occurrence = strpbrk(dnibusqueda, " \t");
+	} while (occurrence || !dnibusqueda[0]);
+
+	while (fread(&registro, sizeof registro, 1, fp)) {
+		if (!strcmp(registro.dni, dnibusqueda) && registro.estado) { //Esta funcion esta explicada en validarDNI/CUIT()
 			registro.estado = false;
-			fseek(p, pos * sizeof registro, 0); //fseek lo que hace es ubicar el cursor en el archivo, va a ir posicionandose a medida que itera
-			fwrite(&registro, sizeof registro, 1, p); //Es decir, la posicion * lo que pesa el registro.
+
+			fseek(fp, pos * sizeof registro, 0); //fseek lo que hace es ubicar el cursor en el archivo, va a ir posicionandose a medida que itera
+			fwrite(&registro, sizeof registro, 1, fp); //Es decir, la posicion * lo que pesa el registro.
+
 			cout << "Chofer eliminado, registro dado de baja" << endl;
-			fclose(p);
+
+			fclose(fp);
 			return pos;
 		}
 		pos++;
 	}
+
 	cout << "No se pudo dar de baja. :)" << endl;
-	fclose(p);
+
+	fclose(fp);
 	return -1;
 }
 // Modificacion
 int modificarRegistro() {
-	FILE* p;
+	FILE* fp;
 	Chofer registro;
+	char* occurrence;
 	int pos;
 	char dnibusqueda[10];
-	p = fopen("choferes.dat", "rb+");
-	if (p == NULL) {
+
+	fp = fopen("choferes.dat", "rb+");
+	if (fp) {
 		cout << "Error. :)" << endl;
 		return -1;
 	}
+
 	do {
 		cin.ignore();
 		cout << "Ingrese el DNI:" << endl;
 		cin.getline(dnibusqueda, 10);
-		pos = strspn(dnibusqueda, " \t"); //Explicado en cargarRegistro()
-	} while (dnibusqueda[pos] == 0); 
+		occurrence = strpbrk(dnibusqueda, " \t");
+	} while (occurrence || !dnibusqueda[0]);
+
 	pos = 0;
-	while (fread(&registro, sizeof registro, 1, p) == 1) {
-		if ((strcmp(registro.dni, dnibusqueda) == 0) && registro.estado == true) { //Explicado en bajaRegistro()
+	while (fread(&registro, sizeof registro, 1, fp)) {
+		if (!strcmp(registro.dni, dnibusqueda) && registro.estado) { //Explicado en bajaRegistro()
 			cout << "Ingrese la nueva fecha de vencimiento" << endl; //Una vez que encuentra la coincidencia entre registro.dni, con busquedadni,
 			cout << "Dia: " << endl;								// Te deja cargar la nueva fecha, y asi lo modificas.
 			cin >> registro.fecha_vencimiento.dia;
+
 			cout << "Mes: " << endl;
 			cin >> registro.fecha_vencimiento.mes;
+
 			cout << "Anio: " << endl;
 			cin >> registro.fecha_vencimiento.anio;
-			fseek(p, pos * sizeof registro, 0); //Explicado ya en bajaRegistro()
-			fwrite(&registro, sizeof registro, 1, p);
-			fclose(p);
+
+			fseek(fp, pos * sizeof registro, 0); //Explicado ya en bajaRegistro()
+			fwrite(&registro, sizeof registro, 1, fp);
+
+			fclose(fp);
 			return pos;
 		}
 		pos++;
 	}
+
 	cout << "No existe ese DNI" << endl;
-	fclose(p);
+
+	fclose(fp);
 	return -1;
 }
 // Lista
 void mostrarRegistro(Chofer registro) {
-	if (registro.estado == true) {
+	if (registro.estado) {
 		cout << "DNI: " << registro.dni << endl;
 		cout << "Apellido: " << registro.apellido << endl;
 		cout << "Nombre: " << registro.nombre << endl;
@@ -278,46 +299,57 @@ void mostrarRegistro(Chofer registro) {
 		cout << "----------------------------------------" << endl;
 	}
 }
+
 void listaRegistro() {
-	FILE* p;
+	FILE* fp;
 	Chofer registro;
-	p = fopen("choferes.dat", "rb");
-	if (p == NULL) return;
-	while (fread(&registro, sizeof registro, 1, p) == 1) {
-		if (registro.estado == true) {
+
+	fp = fopen("choferes.dat", "rb");
+	if (!fp) return;
+
+	while (fread(&registro, sizeof registro, 1, fp)) {
+		if (registro.estado)
 			mostrarRegistro(registro);
-		}
 	}
-	fclose(p);
+
+	fclose(fp);
 	anykey();
 }
+
 int listaporDNI() {
-	FILE* p;
+	FILE* fp;
 	Chofer registro;
+	char* occurrence;
 	int pos;
 	char dnibusqueda[10];
-	p = fopen("choferes.dat", "rb+");
-	if (p == NULL) {
+
+	fp = fopen("choferes.dat", "rb+");
+	if (!fp) {
 		cout << "Error. :)" << endl;
 		return -1;
 	}
+
 	do {
 		cin.ignore();
 		cout << "Ingrese el DNI:" << endl;
 		cin.getline(dnibusqueda, 10);
-		pos = strspn(dnibusqueda, " \t");
-	} while (dnibusqueda[pos] == 0);
+		occurrence = strpbrk(dnibusqueda, " \t");
+	} while (occurrence || !dnibusqueda[0]);
+
 	pos = 0;
-	while (fread(&registro, sizeof registro, 1, p) == 1) {
-		if ((strcmp(registro.dni, dnibusqueda) == 0) && registro.estado == true) {  //Cuando encuentra coincidencia entre el DNI dado con registro.dni
+	while (fread(&registro, sizeof registro, 1, fp) == 1) {
+		if (!strcmp(registro.dni, dnibusqueda) && registro.estado) {  //Cuando encuentra coincidencia entre el DNI dado con registro.dni
 			cout << endl << "----------------------------------------" << endl;     //Te muestra el registro que coincida con el DNI.
 			mostrarRegistro(registro);
-			fclose(p);
+
+			fclose(fp);
 			return pos;
 		}
 		pos++;
 	}
+
 	cout << "No existe ese DNI" << endl;
-	fclose(p);
+
+	fclose(fp);
 	return -1;
 }
