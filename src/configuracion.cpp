@@ -10,7 +10,7 @@ int contarRegistrosChoferes() {
 	Chofer registro;
 
 	fp = fopen("choferes.dat", "rb");
-	if (fp == NULL) return -1;
+	if (!fp) return -1;
 
 	fseek(fp, 0, 2);
 	cantidad = ftell(fp) / sizeof registro;
@@ -18,22 +18,41 @@ int contarRegistrosChoferes() {
 
 	return cantidad;
 }
+
+int contarRegistrosViajes() {
+	int cantidad = 0;
+
+	FILE* fp;
+	Viaje registro;
+
+	fp = fopen("viajes.dat", "rb");
+	if (!fp) return -1;
+
+	fseek(fp, 0, 2);
+	cantidad = ftell(fp) / sizeof registro;
+	fclose(fp);
+
+	return cantidad;
+}
+
 void realizarBackupChoferes() {
 	FILE* fp; FILE* fp2;
-	int cantidadRegistros; int it = 0; int opcion;
-	Chofer registro; Chofer registrobackup;
+	int cantidadRegistros; 
+	int it = 0;
+	Chofer registro; 
+	Chofer registrobackup;
 	Chofer* vectoresRegistro;
-	cout << "Desea realizar un backup del sistema?" << endl;
-	cout << "1. Si                           2. No" << endl;
-	cin >> opcion;
-	if (opcion == 2) return;
+
 	fp = fopen("choferes.dat", "rb");
-	if (fp == NULL) return;
+	if (!fp) return;
+
 	cantidadRegistros = contarRegistrosChoferes();
-	//Necesitamos contar cuantos registros hay, para luego crear un vector dinamico y laburar ahi los registros para fianalmente crear un backup.
-	//Para ello se utiliz contarRegistros();
+
+	//Necesitamos contar cuantos registros hay, para luego crear un vector dinamico y laburar ahi los registros para finalmente crear un backup.
+	//Para ello se utiliz contarRegistrosChoferes();
 	vectoresRegistro = new Chofer[cantidadRegistros]; //Asignacion de memoria dinamica a un vector, asi pasamos los registros del archivo a la memoria.
-	if (vectoresRegistro == NULL) {
+
+	if (!vectoresRegistro) {
 		cout << "Error memoria :)" << endl;
 		return;
 	}
@@ -47,10 +66,13 @@ void realizarBackupChoferes() {
 	//Procedo a grabarlo en el backup
 
 	fp2 = fopen("choferes.bkp", "w+b");
-	if (fp2 == NULL) return;
+
+	if (!fp2) return;
+
 	fwrite(vectoresRegistro, sizeof registrobackup, cantidadRegistros, fp2);
 	fclose(fp2);
-	cout << endl <<"Backup de 'choferes.dat' hecho." << endl;
+
+	cout << endl << "Backup de 'choferes.dat' hecho." << endl;
 
 	/**  //Este bloque lo use para verificar que el backup funcione, basicamente muestro el backup.
 	FILE* fp3;
@@ -63,15 +85,170 @@ void realizarBackupChoferes() {
 	fclose(fp2);
 	**/
 
-	delete []vectoresRegistro;
+	delete[]vectoresRegistro;
 	return;
 }
-void realizarBackupViajes() {
 
+void realizarBackupViajes() {
+	FILE* fp; FILE* fp2;
+	int cantidadRegistros; 
+	int it = 0; int opcion;
+	Viaje registro; 
+	Viaje registrobackup;
+	Viaje* vectoresRegistro;
+
+	fp = fopen("viajes.dat", "rb");
+
+	if (!fp) return;
+
+	cantidadRegistros = contarRegistrosViajes();
+
+	//Necesitamos contar cuantos registros hay, para luego crear un vector dinamico y laburar ahi los registros para finalmente crear un backup.
+	//Para ello se utiliz contarRegistrosViajes();
+	vectoresRegistro = new Viaje[cantidadRegistros]; //Asignacion de memoria dinamica a un vector, asi pasamos los registros del archivo a la memoria.
+
+	if (!vectoresRegistro) {
+		cout << "Error memoria :)" << endl;
+		return;
+	}
+	while (fread(&registro, sizeof registro, 1, fp) == 1) {
+		vectoresRegistro[it] = registro;
+		it++;
+	}
+	fclose(fp);
+
+	//Una vez pasados los registros del archivo a la memoria (en un vector)
+	//Procedo a grabarlo en el backup
+
+	fp2 = fopen("viajes.bkp", "w+b");
+
+	if (!fp2) return;
+
+	fwrite(vectoresRegistro, sizeof registrobackup, cantidadRegistros, fp2);
+	fclose(fp2);
+
+	cout << endl << "Backup de 'viajes.dat' hecho." << endl;
+
+	delete[]vectoresRegistro;
+	return;
 }
 //Restaurar backup
+
+int contarRegistrosChoferesBackup() {
+	int cantidad = 0;
+
+	FILE* fp;
+	Chofer registro;
+
+	fp = fopen("choferes.bkp", "rb");
+	if (!fp) return -1;
+
+	fseek(fp, 0, 2);
+	cantidad = ftell(fp) / sizeof registro;
+	fclose(fp);
+
+	return cantidad;
+}
+
+int contarRegistrosViajesBackup() {
+	int cantidad = 0;
+
+	FILE* fp;
+	Viaje registro;
+
+	fp = fopen("viajes.bkp", "rb");
+	if (!fp) return -1;
+
+	fseek(fp, 0, 2);
+	cantidad = ftell(fp) / sizeof registro;
+	fclose(fp);
+
+	return cantidad;
+}
+
 void restaurarBackupChoferes() {
+	FILE* fp; FILE* fp2;
+	int cantidadRegistros; int it = 0;
+	Chofer registro; Chofer registrobackup;
+	Chofer* vectoresRegistro;
+
+	fp = fopen("choferes.bkp", "rb");
+
+	if (!fp) return;
+
+	cantidadRegistros = contarRegistrosChoferesBackup();
+
+	//Necesitamos contar cuantos registros hay, para luego crear un vector dinamico y laburar ahi los registros para finalmente crear un backup.
+	//Para ello se utiliz contarRegistrosChoferesBackup();
+	vectoresRegistro = new Chofer[cantidadRegistros]; //Asignacion de memoria dinamica a un vector, asi pasamos los registros del archivo a la memoria.
+
+	if (!vectoresRegistro) {
+		cout << "Error memoria :)" << endl;
+		return;
+	}
+	while (fread(&registro, sizeof registro, 1, fp) == 1) {
+		vectoresRegistro[it] = registro;
+		it++;
+	}
+	fclose(fp);
+
+	//Una vez pasados los registros del archivo a la memoria (en un vector)
+	//Procedo a grabarlo en el archivo original
+
+	fp2 = fopen("choferes.dat", "w+b");
+	if (fp2 == NULL) return;
+
+	fwrite(vectoresRegistro, sizeof registrobackup, cantidadRegistros, fp2);
+	fclose(fp2);
+
+	cout << endl << "Backup de 'choferes.dat' restaurado." << endl;
+
+	delete[]vectoresRegistro;
+	return;
+}
+
+void restaurarBackupViajes() {
+	FILE* fp; FILE* fp2;
+	int cantidadRegistros; 
+	int it = 0; int opcion;
+	Viaje registro; 
+	Viaje registrobackup;
+	Viaje* vectoresRegistro;
+
+	fp = fopen("viajes.bkp", "rb");
+
+	if (!fp) return;
+
+	cantidadRegistros = contarRegistrosViajesBackup();
+
+	//Necesitamos contar cuantos registros hay, para luego crear un vector dinamico y laburar ahi los registros para finalmente crear un backup.
+	//Para ello se utiliz contarRegistrosViajesBackup();
+	vectoresRegistro = new Viaje[cantidadRegistros]; //Asignacion de memoria dinamica a un vector, asi pasamos los registros del archivo a la memoria.
+
+	if (!vectoresRegistro) {
+		cout << "Error memoria :)" << endl;
+		return;
+	}
+	while (fread(&registro, sizeof registro, 1, fp) == 1) {
+		vectoresRegistro[it] = registro;
+		it++;
+	}
+	fclose(fp);
+
+	//Una vez pasados los registros del archivo a la memoria (en un vector)
+	//Procedo a grabarlo en el archivo original
+
+	fp2 = fopen("viajes.dat", "w+b");
+
+	if (!fp2) return;
+
+	fwrite(vectoresRegistro, sizeof registrobackup, cantidadRegistros, fp2);
+	fclose(fp2);
+
+	cout << endl << "Backup de 'viajes.dat' hecho." << endl;
+
+	delete[]vectoresRegistro;
+	return;
 
 }
 //Cargar datos de inicio
-

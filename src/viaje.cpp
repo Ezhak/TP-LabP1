@@ -69,6 +69,7 @@ Viaje cargarRegistroViaje() {
 	reg.idViaje = viajesTotales() + 1;
 	if (!reg.idViaje)
 		return reg;
+	cout << "ID viaje: " << reg.idViaje << endl;
 
 	cin.ignore();
 
@@ -197,7 +198,7 @@ void listarViajes() {
 
 	fp = fopen("viajes.dat", "rb");
 	if (!fp) {
-		cout << "Error al escribir archivo!" << endl;
+		cout << "Error al abrir archivo!" << endl;
 		return;
 	}
 

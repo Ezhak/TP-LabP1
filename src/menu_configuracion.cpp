@@ -5,6 +5,7 @@ void menuConfiguracion() {
 	using namespace std;
 
 	int opcionConfiguracion;
+	int opcionBackup;
 
 	do {
 		cls();
@@ -22,12 +23,23 @@ void menuConfiguracion() {
 		switch (opcionConfiguracion) {
 		case 1:
 			cls();
+			cout << "Desea realizar un backup del sistema?" << endl;
+			cout << "1. Si                           2. No" << endl;
+			cin >> opcionBackup;
+			if (opcionBackup == 2) return;
 			realizarBackupChoferes();
+			realizarBackupViajes();
 			anykey();
 			break;
 		case 2:
 			cls();
-			// restaurarBackup();
+			opcionBackup = 0;
+			cout << "Desea restaurar el backup al sistema?" << endl;
+			cout << "1. Si                           2. No" << endl;
+			cin >> opcionBackup;
+			if (opcionBackup == 2) return;
+			restaurarBackupChoferes();
+			restaurarBackupViajes();
 			anykey();
 			break;
 		case 3:
@@ -45,4 +57,3 @@ void menuConfiguracion() {
 		}
 	} while (opcionConfiguracion);
 }
-
