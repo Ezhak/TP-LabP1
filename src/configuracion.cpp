@@ -35,6 +35,38 @@ int contarRegistrosViajes() {
 	return cantidad;
 }
 
+int contarRegistrosChoferesInicio() {
+	int cantidad = 0;
+
+	FILE* fp;
+	Chofer registro;
+
+	fp = fopen("choferes.ini", "rb");
+	if (!fp) return -1;
+
+	fseek(fp, 0, 2);
+	cantidad = ftell(fp) / sizeof registro;
+	fclose(fp);
+
+	return cantidad;
+}
+
+int contarRegistrosViajesInicio() {
+	int cantidad = 0;
+
+	FILE* fp;
+	Viaje registro;
+
+	fp = fopen("viajes.ini", "rb");
+	if (!fp) return -1;
+
+	fseek(fp, 0, 2);
+	cantidad = ftell(fp) / sizeof registro;
+	fclose(fp);
+
+	return cantidad;
+}
+
 void realizarBackupChoferes() {
 	FILE* fp; FILE* fp2;
 	int cantidadRegistros; 
@@ -252,3 +284,78 @@ void restaurarBackupViajes() {
 
 }
 //Cargar datos de inicio
+
+void cargarDatosInicioChoferes() {
+	FILE* fp; FILE* fp2;
+	int cantidadRegistros; int it = 0;
+	Chofer registro; Chofer registrobackup;
+	Chofer* vectoresRegistro;
+
+	fp = fopen("choferes.ini", "rb");
+
+	if (!fp) return;
+
+	cantidadRegistros = contarRegistrosChoferesInicio();
+
+	vectoresRegistro = new Chofer[cantidadRegistros];
+
+	if (!vectoresRegistro) {
+		cout << "Error memoria :)" << endl;
+		return;
+	}
+	while (fread(&registro, sizeof registro, 1, fp) == 1) {
+		vectoresRegistro[it] = registro;
+		it++;
+	}
+	fclose(fp);
+
+	fp2 = fopen("choferes.dat", "w+b");
+	if (fp2 == NULL) return;
+
+	fwrite(vectoresRegistro, sizeof registrobackup, cantidadRegistros, fp2);
+	fclose(fp2);
+
+	cout << endl << "Carga de datos de inicio de 'choferes.dat' realizado." << endl;
+
+	delete[]vectoresRegistro;
+	return;
+}
+
+void cargarDatosInicioViajes() {
+	FILE* fp; FILE* fp2;
+	int cantidadRegistros;
+	int it = 0; int opcion;
+	Viaje registro;
+	Viaje registrobackup;
+	Viaje* vectoresRegistro;
+
+	fp = fopen("viajes.ini", "rb");
+
+	if (!fp) return;
+
+	cantidadRegistros = contarRegistrosViajesInicio();
+
+	vectoresRegistro = new Viaje[cantidadRegistros];
+
+	if (!vectoresRegistro) {
+		cout << "Error memoria :)" << endl;
+		return;
+	}
+	while (fread(&registro, sizeof registro, 1, fp) == 1) {
+		vectoresRegistro[it] = registro;
+		it++;
+	}
+	fclose(fp);
+
+	fp2 = fopen("viajes.dat", "w+b");
+
+	if (!fp2) return;
+
+	fwrite(vectoresRegistro, sizeof registrobackup, cantidadRegistros, fp2);
+	fclose(fp2);
+
+	cout << endl << "Carga de datos de inicio de 'viajes.dat' realizado." << endl;
+
+	delete[]vectoresRegistro;
+	return;
+}

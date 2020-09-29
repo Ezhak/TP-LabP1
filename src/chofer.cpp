@@ -81,11 +81,11 @@ Chofer cargarRegistroChofer() {
 	cin.getline(registro.telefono, 15);
 
 	cout << "Fecha de Ingreso: " << endl;
-	cout << "Dia: " << endl;
+	cout << "Dia: ";
 	cin >> registro.fecha_ingreso.dia;
-	cout << "Mes: " << endl;
+	cout << "Mes: ";
 	cin >> registro.fecha_ingreso.mes;
-	cout << "Anio: " << endl;
+	cout << "Anio: ";
 	cin >> registro.fecha_ingreso.anio;
 
 	cout << "Fecha de vencimiento del registro: " << endl;
@@ -99,7 +99,7 @@ Chofer cargarRegistroChofer() {
 	cout << "Tipo de registro (1-3): ";
 	cin >> registro.tipoRegistro;
 
-	cout << "Propietario del auto: " << endl;
+	cout << "Propietario del auto: ";
 	cin >> registro.propietarioAuto;
 
 	registro.estado = true;

@@ -6,6 +6,7 @@ void menuConfiguracion() {
 
 	int opcionConfiguracion;
 	int opcionBackup;
+	int opcionInicio;
 
 	do {
 		cls();
@@ -44,7 +45,13 @@ void menuConfiguracion() {
 			break;
 		case 3:
 			cls();
-			// cargarDatosInicio();
+			opcionInicio = 0;
+			cout << "Desea cargar los datos de inicio al sistema?" << endl;
+			cout << "1. Si                           2. No" << endl;
+			cin >> opcionInicio;
+			if (opcionInicio == 2) return;
+			cargarDatosInicioChoferes();
+			cargarDatosInicioViajes();
 			anykey();
 			break;
 		case 0:

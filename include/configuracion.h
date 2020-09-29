@@ -15,6 +15,10 @@ int contarRegistrosChoferesBackup();
 int contarRegistrosViajesBackup();
 void restaurarBackupChoferes();
 void restaurarBackupViajes();
-//Cargar datos de inicio
 
+//Cargar datos de inicio
+int contarRegistrosChoferesInicio();
+int contarRegistrosViajesInicio();
+void cargarDatosInicioChoferes();
+void cargarDatosInicioViajes();
 # endif // CONFIGURACION_H
