@@ -45,12 +45,14 @@ void nuevoViaje() {
 		cout << "Importe inválido." << endl;
 		return;
 	}
-
+	/*
+	
 	// La patente no puede contener una cadena vacía.
 	if (strpbrk(reg.patente, " \t") || !reg.patente[0]) {
 		cout << "Patente inválida." << endl;
 		return;
 	}
+	*/
 
 	// La calificación del viaje debe ser un número entero entre 0 y 5.
 	if (reg.calificacion < 0 || reg.calificacion > 5) {
@@ -64,6 +66,7 @@ void nuevoViaje() {
 
 Viaje cargarRegistroViaje() {
 	Viaje reg;
+	size_t pos;
 
 	// Autonumérico.
 	reg.idViaje = viajesTotales() + 1;
@@ -98,8 +101,12 @@ Viaje cargarRegistroViaje() {
 
 	cin.ignore();
 
-	cout << "Patente: ";
-	cin.getline(reg.patente, 10);
+	do{
+		cout << "Patente: ";
+		cin.getline(reg.patente, 10);
+
+		pos = strspn(reg.patente, " \t");
+	}while (reg.patente[pos] == '\0');
 
 	cout << "Calificación: ";
 	cin >> reg.calificacion;
