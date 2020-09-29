@@ -99,6 +99,9 @@ Chofer cargarRegistroChofer() {
 	cout << "Tipo de registro (1-3): ";
 	cin >> registro.tipoRegistro;
 
+	cout << "Propietario del auto: " << endl;
+	cin >> registro.propietarioAuto;
+
 	registro.estado = true;
 	return registro;
 }
@@ -270,6 +273,7 @@ void mostrarRegistroChofer(Chofer registro) {
 	cout << "\tMes: " << registro.fecha_vencimiento.mes << endl;
 	cout << "\tAnio: " << registro.fecha_vencimiento.anio << endl;
 	cout << "Tipo de registro (1-3): " << registro.tipoRegistro << endl;
+	cout << "Propietario: " << registro.propietarioAuto << endl;
 	cout << "----------------------------------------" << endl;
 }
 
